@@ -37,3 +37,5 @@ class _LoadingScreenState extends State<LoadingScreen> {
     return Scaffold();
   }
 }
+
+//Just a comment
