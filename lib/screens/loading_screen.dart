@@ -1,59 +1,44 @@
 import 'package:flutter/material.dart';
-import "package:clima/services/location.dart";
-import "package:http/http.dart" as http;
-import "dart:convert";
+import "package:clima/services/weather.dart";
+import "location_screen.dart";
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
-const apiKey = "cef7d12b9ccedfccfe618ef9d0d39637";
+
 
 class LoadingScreen extends StatefulWidget {
+
   @override
   _LoadingScreenState createState() => _LoadingScreenState();
 }
 
 class _LoadingScreenState extends State<LoadingScreen> {
-  double latitude;
-  double longitude;
 
   @override
   void initState() {
     super.initState();
-    getLocation();
+    getLocationData();
   }
 
-  void getLocation() async {
-    Location location = Location();
-    await location.getCurrentLocation();
-    latitude = location.latitude;
-    longitude = location.longitude;
-  }
+  void getLocationData() async {
 
-  void getData() async {
-    http.Response response = await http.get(Uri.parse(
-        "https://api.openweathermap.org/data/2.5/weather?lat=35&lon=139&appid=$apiKey"));
-    if (response.statusCode == 200) {
-      String data = response.body;
+    var weatherData = await WeatherModel().getLocationWeather();
 
-      var decodedData = jsonDecode(data);
-
-      var temperature = decodedData["main"]["temp"];
-      print(temperature);
-
-      var conditionNum = decodedData["weather"][0]["id"];
-      print(conditionNum);
-
-      var cityName = decodedData["name"];
-      print(cityName);
-    } else {
-      print(response.statusCode);
-    }
+    Navigator.push(context, MaterialPageRoute(builder: (context) {
+      return LocationScreen(locationWeather: weatherData);
+    }));
   }
 
   @override
   Widget build(BuildContext context) {
-    getData();
-    return Scaffold();
+    return Scaffold(
+      body: Center(
+        child: SpinKitWave(
+          color: Colors.white,
+          size: 100
+        )
+      )
+    );
   }
 }
 
-//Just a comment
-//Another comment
+
